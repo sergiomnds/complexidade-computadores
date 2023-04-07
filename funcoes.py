@@ -1,7 +1,13 @@
+'''
+Arquivo com as funções utilizadas no programa principal.
+Cada função possui uma breve descrição de sua funcionalidade e complexidade.
+
+Autor: Sérgio Mendes
+'''
 import random
 import os
 
-def gerarDados():
+def gerarDados(qntComputadores = 10):
     '''
     Função que gera temperatutas aleatórias para os computadores.
     
@@ -17,7 +23,7 @@ def gerarDados():
     
     # Cria uma lista de dicionários com os dados dos computadores
     computadores = []
-    for i in range(0, 10):
+    for i in range(0, qntComputadores):
         computador = {'id': i + 1, 'temperatura': round(random.uniform(40.0, 120.0), 1)}
         computadores.append(computador)
 
@@ -97,7 +103,6 @@ def dadosCrescente():
             if computadores[j][1] > computadores[j+1][1]:
                 computadores[j], computadores[j+1] = computadores[j+1], computadores[j]
 
-    # Cria a tabela
     # Imprime a tabela ordenada
     print('Temperaturas dos computadores em ordem crescente: ')
     print("-" * 40)
@@ -106,9 +111,12 @@ def dadosCrescente():
     for computador in computadores:
         print(f'{computador[1]:^20}{computador[0]:^20}')
          
-def trioTemperatura():
+def trioTemperatura(limiteTemperatura = 80.0):
     '''
     Função que encontrar todos os possíveis trios de computadores com temperatura acima do limite especificado (80°C)
+    
+    :param limiteTemperatura: temperatura limite para a busca dos trios. Por padrão é 80°C.
+    :type limiteTemperatura: float
     
     :complexidade: O(n³), onde n é a quantidade de computadores a serem ordenados. São três loops aninhados que percorrem a lista de computadores; O primeiro loop percorre todos os computadores, o segundo loop percorre todos os computadores restantes após o primeiro loop, e o terceiro loop percorre todos os computadores restantes após o segundo loop.
     '''
@@ -121,10 +129,9 @@ def trioTemperatura():
             computadores.append((computador, float(temperatura)))
 
     # Encontra os trios de computadores com temperatura acima do limite e os imprime
-    limite_temperatura = 80
     n = len(computadores)
     for i in range(n):
         for j in range(i+1, n):
             for k in range(j+1, n):
-                if computadores[i][1] > limite_temperatura and computadores[j][1] > limite_temperatura and computadores[k][1] > limite_temperatura:
-                    print(f"Trio de computadores com temperatura acima de {limite_temperatura}°C: {computadores[i][0]}, {computadores[j][0]}, {computadores[k][0]}")
+                if computadores[i][1] > limiteTemperatura and computadores[j][1] > limiteTemperatura and computadores[k][1] > limiteTemperatura:
+                    print(f"Trio de computadores com temperatura acima de {limiteTemperatura}°C: {computadores[i][0]}, {computadores[j][0]}, {computadores[k][0]}")

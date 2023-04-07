@@ -1,3 +1,10 @@
+'''
+Menu de opções para o usuário escolher o que deseja fazer. O programa só é encerrado quando o usuário escolhe a opção 6 - Sair.
+Utiliza o try/except para tratar o erro de digitação do usuário, caso ele digite uma opção inválida.
+Utiliza as funções importadas do arquivo funcoes.py.
+
+Autor: Sérgio Mendes
+'''
 from funcoes import *
 
 gerarDados()
