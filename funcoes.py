@@ -15,6 +15,7 @@ def gerarDados(qntComputadores = 10):
     :type qtd_computadores: int
     
     :complexidade: O(n), onde n é a quantidade de computadores que serão gerados. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
+    Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
     '''
     
     # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
@@ -37,6 +38,7 @@ def listaComputadores():
     Função que imprime uma lista de computadores monitorados, sem mostrar suas temperaturas.
     
     :complexidade: O(n), onde n é a quantidade de computadores que serão impressos. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
+    Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
     '''
     # Define o cabeçalho da tabela
     cabecalho = ["ID - COMPUTADOR"]
@@ -64,6 +66,7 @@ def listaLeitura():
     Função que imprime uma lista das leituras feitas sobre os computadores monitorados, mostrando suas temperaturas.
     
     :complexidade: O(n), onde n é a quantidade de computadores que serão impressos. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
+    Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
     '''
     
     # Cria uma lista de dados e adiciona os dados do arquivo à lista
@@ -87,6 +90,9 @@ def dadosCrescente():
     Função que retorna os dados em ordem crescente dentro de uma tabela.
     
     :complexidade: O(n²), onde n é a quantidade de computadores a serem ordenados. São dois loops que percorrem a lista, a cada iteração do loop externo, que percorre toda a lista, o loop interno percorre novamente toda a lista, comparando o elemento atual com o próximo e realizando a troca se necessário.
+    
+    Se a entrada de dados for muito grande, o tempo de execução do algoritmo pode se tornar impraticável, além de exigir uma quantidade significativa de recursos de memória.
+    Por exemplo, se o algoritmo leva 1 segundo para classificar uma lista de 1000 itens, ele levaria 16 minutos para classificar uma lista de 10.000 itens, e cerca de 28 horas para classificar uma lista de 100.000 itens.
     '''
     
     # Lê os dados do arquivo e os adiciona à lista
@@ -119,6 +125,11 @@ def trioTemperatura(limiteTemperatura = 80.0):
     :type limiteTemperatura: float
     
     :complexidade: O(n³), onde n é a quantidade de computadores a serem ordenados. São três loops aninhados que percorrem a lista de computadores; O primeiro loop percorre todos os computadores, o segundo loop percorre todos os computadores restantes após o primeiro loop, e o terceiro loop percorre todos os computadores restantes após o segundo loop.
+    
+    O tempo de execução do algoritmo aumenta com o cubo do tamanho da entrada de dados. Isso pode levar a problemas de desempenho significativos em conjuntos de dados grandes.
+    Por exemplo, para uma entrada com 100 elementos, um algoritmo com complexidade O(n³) pode levar 1.000.000 unidades de tempo.
+    
+    Assim, é possível que gere uma situação de necessidade de processamento via força bruta, quando por exemplo, quando a lista de computadores for muito grande.
     '''
     
     # Lê os dados do arquivo e os adiciona à lista
