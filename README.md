@@ -1,17 +1,17 @@
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 
-[![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-green)]()
+[![Status](https://img.shields.io/badge/Status-Concluído-blue)]()
 
 <h1 align="center">🌡️ Monitoramento de Temperatura de Computadores</h1>
 
 Repositório dedicado ao programa desenvolvido para a Avaliação da disciplina Complexidade de Algoritmos.
 
 O programa gera uma temperatura aleatória de 10 computadores diferentes e os guarda em arquivo de texto. Com base nisso, ela possue as seguintes funcionalidades:
-    - Gerar NOVOS dados para os computadores;
-    - Listar os computadores monitorados;
-    - Listar as leituras de todos os computadores que foram monitorados;
-    - Listar os documentos em ordem crescente, pela temperatura;
-    - Mostrar os trio de computadores que possuem temperatura perigosa (acima de 80°C).
+- Gerar NOVOS dados para os computadores;
+- Listar os computadores monitorados;
+- Listar as leituras de todos os computadores que foram monitorados;
+- Listar os documentos em ordem crescente, pela temperatura;
+- Mostrar os trio de computadores que possuem temperatura perigosa (acima de 80°C).
 
 <h2>👋🏼 Dependências para rodar o programa: </h2>
 
@@ -32,3 +32,9 @@ Neste programa, foi utilizada para gerar as temperaturas aleatórias para os com
 A biblioteca 'os' fornece uma maneira de interagir com o sistema operacional subjacente. Com ela, podemos manipular arquivos e diretórios, executar comandos do sistema, acessar variáveis de ambiente e muito mais.
 
 Neste programa, foi utilizada para manipular o arquivo de texto onde os dados sobre os computadores estão armazenados.
+
+<h2>📷 Galeria</h2>
+
+![menu](https://user-images.githubusercontent.com/85349959/230675288-2280f127-1d05-4e95-9e31-074c83994f57.png)
+![opcao-4](https://user-images.githubusercontent.com/85349959/230675350-a1391143-48d7-46d8-b35a-041c86fb8aa5.png)
+![opcao-5](https://user-images.githubusercontent.com/85349959/230675465-025717d4-dad1-40d5-8285-c982646462ab.png)
