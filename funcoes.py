@@ -1,92 +1,130 @@
 import random
 import os
-from prettytable import PrettyTable
 
 def gerarDados():
-    # cria uma lista com 10 dicionários que representam as pessoas
+    '''
+    Função que gera temperatutas aleatórias para os computadores.
+    
+    :param qtd_computadores: quantidade de computadores que serão gerados. Por padrão são gerados 10 computadores.
+    :type qtd_computadores: int
+    
+    :complexidade: O(n), onde n é a quantidade de computadores que serão gerados. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
+    '''
+    
+    # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
     if os.path.exists('computadores.txt'):
         os.remove('computadores.txt')
     
+    # Cria uma lista de dicionários com os dados dos computadores
     computadores = []
-    for i in range(1, 11):
-        computador = {'id': i, 'temperatura': round(random.uniform(40.0, 120.0), 1)}
+    for i in range(0, 10):
+        computador = {'id': i + 1, 'temperatura': round(random.uniform(40.0, 120.0), 1)}
         computadores.append(computador)
 
-    # cria um arquivo de texto e escreve os dados das pessoas nele
+    # Cria um arquivo e escreve os dados dos computadores
     with open('computadores.txt', 'w') as arquivo:
         for computador in computadores:
             arquivo.write(f'COMPUTADOR {computador["id"]}: {computador["temperatura"]} \n')
+        
+def listaComputadores():
+    '''
+    Função que imprime uma lista de computadores monitorados, sem mostrar suas temperaturas.
+    
+    :complexidade: O(n), onde n é a quantidade de computadores que serão impressos. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
+    '''
+    # Define o cabeçalho da tabela
+    cabecalho = ["ID - COMPUTADOR"]
 
-    print('Temperaturas dos computadores gerados com sucesso!')
+    # Cria uma lista de linhas da tabela
+    linhas = []
+
+    # Lê o arquivo e adiciona os dados à lista de linhas
+    with open('computadores.txt', 'r') as arquivo:
+        for linha in arquivo:
+            computador = linha.split(":")[0].strip()
+            linhas.append([computador])
+
+    # Imprime a tabela
+    print("Lista de Computadores:")
+    print("-" * 20)
+    print(f"{cabecalho[0]:^20}")
+    print("-" * 20)
+    for linha in linhas:
+        print(f"{linha[0]:^20}")
+    print("-" * 20)
+
+def listaLeitura():
+    '''
+    Função que imprime uma lista das leituras feitas sobre os computadores monitorados, mostrando suas temperaturas.
+    
+    :complexidade: O(n), onde n é a quantidade de computadores que serão impressos. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
+    '''
+    
+    # Cria uma lista de dados e adiciona os dados do arquivo à lista
+    dados = []
+    with open('computadores.txt', 'r') as arquivo:
+        for linha in arquivo:
+            computador, temperatura = linha.strip().split(': ')
+            dados.append((computador, temperatura))
+
+    # Imprime a tabela
+    print('Temperaturas dos computadores: ')
+    print("-" * 40)
+    print(f'{"ID - COMPUTADOR":<20}{"TEMPERATURA (°C)":^20}')
+    print("-" * 40)
+    for dado in dados:
+        print(f'{dado[0]:<20}{dado[1]:^20}')
+    print("-" * 40)
 
 def dadosCrescente():
+    '''
+    Função que retorna os dados em ordem crescente dentro de uma tabela.
+    
+    :complexidade: O(n²), onde n é a quantidade de computadores a serem ordenados. São dois loops que percorrem a lista, a cada iteração do loop externo, que percorre toda a lista, o loop interno percorre novamente toda a lista, comparando o elemento atual com o próximo e realizando a troca se necessário.
+    '''
+    
+    # Lê os dados do arquivo e os adiciona à lista
     with open('computadores.txt', 'r') as arquivo:
         computadores = []
         for linha in arquivo:
             computador, temperatura = linha.strip().split(': ')
-            computadores.append((computador, float(temperatura)))  # adiciona à lista como uma tupla (pessoa, idade)
+            computadores.append((computador, float(temperatura)))  # adiciona o computador e a temperatura à lista
 
-    computadores_ordem_crescente = sorted(computadores, key=lambda computador: computador[1])  # ordena a lista de pessoas pela temperatura
+    # Ordena a lista de computadores, usando bubble sort
+    n = len(computadores)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if computadores[j][1] > computadores[j+1][1]:
+                computadores[j], computadores[j+1] = computadores[j+1], computadores[j]
 
-    # imprime a tabela ordenada
-    tabelaCrescente = PrettyTable()
-    tabelaCrescente.field_names = ["TEMPERATURA (°C)", "ID - COMPUTADOR"]
-    for computador, temperatura in computadores_ordem_crescente:
-        tabelaCrescente.add_row([temperatura, computador])
-    
+    # Cria a tabela
+    # Imprime a tabela ordenada
     print('Temperaturas dos computadores em ordem crescente: ')
-    print(tabelaCrescente)
-        
-def listaComputadores():
-    tabelaComputadores = PrettyTable()
-    tabelaComputadores.field_names = ["ID - COMPUTADOR"]
+    print("-" * 40)
+    print(f'{"TEMPERATURA (°C)":<20}{"ID - COMPUTADOR":^20}')
+    print("-" * 40)
+    for computador in computadores:
+        print(f'{computador[1]:^20}{computador[0]:^20}')
+         
+def trioTemperatura():
+    '''
+    Função que encontrar todos os possíveis trios de computadores com temperatura acima do limite especificado (80°C)
     
-    with open('computadores.txt', 'r') as arquivo:
-        for linha in arquivo:
-            computador = linha.strip().split(': ')[0]
-            tabelaComputadores.add_row([computador])
+    :complexidade: O(n³), onde n é a quantidade de computadores a serem ordenados. São três loops aninhados que percorrem a lista de computadores; O primeiro loop percorre todos os computadores, o segundo loop percorre todos os computadores restantes após o primeiro loop, e o terceiro loop percorre todos os computadores restantes após o segundo loop.
+    '''
     
-    print('Lista de computadores monitorados: ')
-    print(tabelaComputadores)
-
-def listaLeitura():
-    tabelaLeitura = PrettyTable()
-    tabelaLeitura.field_names = ["ID - COMPUTADOR", "TEMPERATURA (°C)"]
-
+    # Lê os dados do arquivo e os adiciona à lista
     with open('computadores.txt', 'r') as arquivo:
+        computadores = []
         for linha in arquivo:
             computador, temperatura = linha.strip().split(': ')
-            tabelaLeitura.add_row([computador, temperatura])
+            computadores.append((computador, float(temperatura)))
 
-    print('Temperaturas dos computadores: ')
-    print(tabelaLeitura)
-            
-def relatorioTemperatura():
-    tabela_temperatura_perigosa = PrettyTable()
-    tabela_temperatura_perigosa.field_names = ["ID - COMPUTADOR", "TEMPERATURA PERIGOSA (ACIMA DE 80°C)"]
-    
-    tabela_temperatura_ideal = PrettyTable()
-    tabela_temperatura_ideal.field_names = ["ID - COMPUTADOR", "TEMPERATURA IDEAL (ENTRE 60°C E 80°C)"]
-    
-    tabela_temperatura_abaixo = PrettyTable()
-    tabela_temperatura_abaixo.field_names = ["ID - COMPUTADOR", "TEMPERATURA ABAIXO DO IDEAL (ABAIXO DE 60°C)"]
-    
-    with open('computadores.txt', 'r') as arquivo:
-        for linha in arquivo:
-            computador, temperatura = linha.strip().split(': ')
-            if float(temperatura) > 80:
-                tabela_temperatura_perigosa.add_row([computador, temperatura])
-                
-            elif float(temperatura) >= 60 and float(temperatura) <= 80:
-                tabela_temperatura_ideal.add_row([computador, temperatura])
-                
-            elif float(temperatura) < 60:
-                tabela_temperatura_abaixo.add_row([computador, temperatura])
-                
-    print('Relatório de temperatura dos computadores: ')
-    print('Temperatura perigosa: ')
-    print(tabela_temperatura_perigosa)
-    print('Temperatura ideal: ')
-    print(tabela_temperatura_ideal)
-    print('Temperatura abaixo do ideal: ')
-    print(tabela_temperatura_abaixo)
+    # Encontra os trios de computadores com temperatura acima do limite e os imprime
+    limite_temperatura = 80
+    n = len(computadores)
+    for i in range(n):
+        for j in range(i+1, n):
+            for k in range(j+1, n):
+                if computadores[i][1] > limite_temperatura and computadores[j][1] > limite_temperatura and computadores[k][1] > limite_temperatura:
+                    print(f"Trio de computadores com temperatura acima de {limite_temperatura}°C: {computadores[i][0]}, {computadores[j][0]}, {computadores[k][0]}")
