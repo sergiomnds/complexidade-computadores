@@ -10,7 +10,7 @@ O programa gera uma temperatura aleatória de 10 computadores diferentes e os gu
 - Gerar NOVOS dados para os computadores;
 - Listar os computadores monitorados;
 - Listar as leituras de todos os computadores que foram monitorados;
-- Listar os documentos em ordem crescente, pela temperatura;
+- Listar os computadores em ordem crescente, pela temperatura;
 - Mostrar os trio de computadores que possuem temperatura perigosa (acima de 80°C).
 
 <h2>👋🏼 Dependências para rodar o programa: </h2>
