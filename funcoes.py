@@ -6,6 +6,7 @@ Autor: Sérgio Mendes
 '''
 import random
 import os
+import threading
 
 def gerarDados(qntComputadores = 10):
     '''
@@ -22,16 +23,25 @@ def gerarDados(qntComputadores = 10):
     if os.path.exists('computadores.txt'):
         os.remove('computadores.txt')
     
+    # Função auxiliar para gerar os dados de um computador em uma thread
+    def gerarDadosComputador(computador):
+        computador['temperatura'] = round(random.uniform(40.0, 120.0), 1)
+        with open('computadores.txt', 'a') as arquivo:
+            arquivo.write(f'COMPUTADOR {computador["id"]}: {computador["temperatura"]}\n')
+    
     # Cria uma lista de dicionários com os dados dos computadores
     computadores = []
-    for i in range(0, qntComputadores):
-        computador = {'id': i + 1, 'temperatura': round(random.uniform(40.0, 120.0), 1)}
+    threads = []
+    for i in range(qntComputadores):
+        computador = {'id': i + 1}
         computadores.append(computador)
+        thread = threading.Thread(target=gerarDadosComputador, args=(computador,))
+        threads.append(thread)
+        thread.start()
 
-    # Cria um arquivo e escreve os dados dos computadores
-    with open('computadores.txt', 'w') as arquivo:
-        for computador in computadores:
-            arquivo.write(f'COMPUTADOR {computador["id"]}: {computador["temperatura"]} \n')
+    # Aguarda todas as threads terminarem
+    for thread in threads:
+        thread.join()
         
 def listaComputadores():
     '''
@@ -46,11 +56,22 @@ def listaComputadores():
     # Cria uma lista de linhas da tabela
     linhas = []
 
+    # Função auxiliar para processar uma linha do arquivo em uma thread
+    def processarLinha(linha):
+        computador = linha.split(":")[0].strip()
+        linhas.append([computador])
+    
     # Lê o arquivo e adiciona os dados à lista de linhas
     with open('computadores.txt', 'r') as arquivo:
+        threads = []
         for linha in arquivo:
-            computador = linha.split(":")[0].strip()
-            linhas.append([computador])
+            thread = threading.Thread(target=processarLinha, args=(linha,))
+            threads.append(thread)
+            thread.start()
+            
+        # Aguarda o término de todas as threads
+        for thread in threads:
+            thread.join()
 
     # Imprime a tabela
     print("Lista de Computadores:")
@@ -71,10 +92,29 @@ def listaLeitura():
     
     # Cria uma lista de dados e adiciona os dados do arquivo à lista
     dados = []
+    
+    # Cria um semáforo binário
+    semaforo = threading.Semaphore(value=1)
+    
+     # Função auxiliar para processar uma linha do arquivo em uma thread
+    def processarLinha(linha):
+        computador, temperatura = linha.strip().split(': ')
+        
+        # Adquire o semáforo antes de adicionar à lista
+        semaforo.acquire()
+        dados.append((computador, temperatura))
+        semaforo.release()
+    
     with open('computadores.txt', 'r') as arquivo:
+        threads = []
         for linha in arquivo:
-            computador, temperatura = linha.strip().split(': ')
-            dados.append((computador, temperatura))
+            thread = threading.Thread(target=processarLinha, args=(linha,))
+            threads.append(thread)
+            thread.start()
+
+        # Aguarda o término de todas as threads
+        for thread in threads:
+            thread.join()
 
     # Imprime a tabela
     print('Temperaturas dos computadores: ')
@@ -116,7 +156,7 @@ def dadosCrescente():
     print("-" * 40)
     for computador in computadores:
         print(f'{computador[1]:^20}{computador[0]:^20}')
-         
+
 def trioTemperatura(limiteTemperatura = 80.0):
     '''
     Função que encontrar todos os possíveis trios de computadores com temperatura acima do limite especificado (80°C)
@@ -132,6 +172,11 @@ def trioTemperatura(limiteTemperatura = 80.0):
     Assim, é possível que gere uma situação de necessidade de processamento via força bruta, quando por exemplo, quando a lista de computadores for muito grande.
     '''
     
+    def processar_trios(indices):
+        for i, j, k in indices:
+            if computadores[i][1] > limiteTemperatura and computadores[j][1] > limiteTemperatura and computadores[k][1] > limiteTemperatura:
+                print(f"Trio de computadores com temperatura acima de {limiteTemperatura}°C: {computadores[i][0]}, {computadores[j][0]}, {computadores[k][0]}")
+                
     # Lê os dados do arquivo e os adiciona à lista
     with open('computadores.txt', 'r') as arquivo:
         computadores = []
@@ -139,10 +184,27 @@ def trioTemperatura(limiteTemperatura = 80.0):
             computador, temperatura = linha.strip().split(': ')
             computadores.append((computador, float(temperatura)))
 
-    # Encontra os trios de computadores com temperatura acima do limite e os imprime
     n = len(computadores)
+    trios = []
+    
+    # Gera os índices dos trios a serem processados
     for i in range(n):
         for j in range(i+1, n):
             for k in range(j+1, n):
-                if computadores[i][1] > limiteTemperatura and computadores[j][1] > limiteTemperatura and computadores[k][1] > limiteTemperatura:
-                    print(f"Trio de computadores com temperatura acima de {limiteTemperatura}°C: {computadores[i][0]}, {computadores[j][0]}, {computadores[k][0]}")
+                trios.append((i, j, k))
+                
+    # Divide os trios entre as threads
+    num_threads = min(4, len(trios))  # Defina o número de threads desejado (exemplo: 4)
+    tamanho_bloco = len(trios) // num_threads
+    blocos = [trios[i:i + tamanho_bloco] for i in range(0, len(trios), tamanho_bloco)]
+    
+    # Cria as threads e inicia o processamento
+    threads = []
+    for bloco in blocos:
+        t = threading.Thread(target=processar_trios, args=(bloco,))
+        t.start()
+        threads.append(t)
+
+    # Aguarda a conclusão de todas as threads
+    for t in threads:
+        t.join()
