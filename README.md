@@ -43,20 +43,20 @@ A biblioteca 'os' fornece uma maneira de interagir com o sistema operacional sub
 
 Neste programa, foi utilizada para manipular o arquivo de texto onde os dados sobre os computadores estão armazenados.
 
-<h4> threading</h4>
+<h4>🧵 threading</h4>
 A biblioteca 'threading' é uma biblioteca do Python que fornece suporte para programação concorrente por meio de threads. Além disso, oferece recursos para sincronização e comunicação entre threads.
 
 Neste programa, foi utilizada para dividir as funções em threads, para que elas possam ser executadas simultaneamente.
-<h4> hashlib</h4>
+<h4>#️⃣ hashlib</h4>
 A biblioteca hashlib é uma biblioteca padrão do Python que fornece uma interface para cálculos de funções de hash criptográficas.
 
 Neste programa, foi utilizada para gerar a chave de encriptação.
 
-<h4> pydub</h4>
+<h4>🎶 pydub</h4>
 O PyDub é uma biblioteca Python projetada para simplificar a manipulação e processamento de arquivos de áudio.
 
 Neste programa, foi utilizada para manipular o arquivo de áudio .WAV.
-<h4> pycryptodome</h4>
+<h4>🙈 pycryptodome</h4>
 O pycryptodome é uma biblioteca de criptografia em Python que fornece uma ampla gama de algoritmos criptográficos e ferramentas relacionadas.
 
 Neste programa, foi utilizada para encriptar e decriptar o arquivo de áudio .WAV.
