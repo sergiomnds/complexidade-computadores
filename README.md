@@ -21,7 +21,17 @@ O programa foi desenvolvido inteiramente em Python, e deve está instalado na m�
 IMPORTANTE: O Interpretor deve está atualizado! Para o desenvolvimento deste programa foi utilizado o Python 3.11.2 64-bit. Recomendo usar esta versão ou superior!
 
 <h3>📚 Bibliotecas Utilizadas: </h3>
-Ambas as bibliotecas listadas abaixo ('random' e 'os') fazem parte da biblioteca padrão do Python, portanto não precisam serem instaladas separadamente, já estão disponíveis assim que o Python é instalado.
+As bibliotecas listadas abaixo, exceto 'pydub' e 'pycryptodome', fazem parte da biblioteca padrão do Python, portanto não precisam serem instaladas separadamente, já estão disponíveis assim que o Python é instalado.
+
+Para instalar as bibliotecas 'pydub' e 'pycryptodome', basta executar os seguintes comandos no terminal:
+
+```bash
+pip install pydub
+```
+
+```bash
+pip install pycryptodome
+```
 
 <h4>🎲 random</h4>
 A biblioteca 'random' em Python fornece funções para gerar números aleatórios e realizar operações relacionadas a probabilidade e estatística.
@@ -32,6 +42,24 @@ Neste programa, foi utilizada para gerar as temperaturas aleatórias para os com
 A biblioteca 'os' fornece uma maneira de interagir com o sistema operacional subjacente. Com ela, podemos manipular arquivos e diretórios, executar comandos do sistema, acessar variáveis de ambiente e muito mais.
 
 Neste programa, foi utilizada para manipular o arquivo de texto onde os dados sobre os computadores estão armazenados.
+
+<h4> threading</h4>
+A biblioteca 'threading' é uma biblioteca do Python que fornece suporte para programação concorrente por meio de threads. Além disso, oferece recursos para sincronização e comunicação entre threads.
+
+Neste programa, foi utilizada para dividir as funções em threads, para que elas possam ser executadas simultaneamente.
+<h4> hashlib</h4>
+A biblioteca hashlib é uma biblioteca padrão do Python que fornece uma interface para cálculos de funções de hash criptográficas.
+
+Neste programa, foi utilizada para gerar a chave de encriptação.
+
+<h4> pydub</h4>
+O PyDub é uma biblioteca Python projetada para simplificar a manipulação e processamento de arquivos de áudio.
+
+Neste programa, foi utilizada para manipular o arquivo de áudio .WAV.
+<h4> pycryptodome</h4>
+O pycryptodome é uma biblioteca de criptografia em Python que fornece uma ampla gama de algoritmos criptográficos e ferramentas relacionadas.
+
+Neste programa, foi utilizada para encriptar e decriptar o arquivo de áudio .WAV.
 
 <h2>📷 Galeria</h2>
 

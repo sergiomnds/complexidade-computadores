@@ -18,7 +18,7 @@ def gerarDados(qntComputadores=10, nome_arquivo_audio='floresta.wav'):
     :param qntComputadores: quantidade de computadores que serão gerados. Por padrão são gerados 10 computadores.
     :type qntComputadores: int
     :param nome_arquivo_audio: nome do arquivo de áudio no formato WAV para gerar as chaves de encriptação.
-    :type nome_arquivo_audio: str
+    :type nome_arquivo_audio: arquivo WAV
     
     :complexidade: O(n), onde n é a quantidade de computadores que serão gerados. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
     Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
@@ -56,6 +56,12 @@ def gerarDados(qntComputadores=10, nome_arquivo_audio='floresta.wav'):
         thread.join()
 
 def gerar_chaves_audio(nome_arquivo):
+    '''
+    Função que gera as chaves de encriptação a partir de um arquivo de áudio no formato WAV.
+    
+    :param nome_arquivo: nome do arquivo de áudio no formato WAV.
+    :type nome_arquivo: str
+    '''
     # Carrega o arquivo de áudio
     audio = AudioSegment.from_wav(nome_arquivo)
 
@@ -71,6 +77,13 @@ def gerar_chaves_audio(nome_arquivo):
     return chave1, chave2, chave3
 
 def gerar_chave_encriptacao(chave1, chave2, chave3):
+    '''
+    Função que gera uma chave de encriptação a partir de três chaves geradas a partir de um arquivo de áudio no formato WAV.
+    
+    :param chave1: primeira chave gerada a partir do arquivo de áudio.
+    :param chave2: segunda chave gerada a partir do arquivo de áudio.
+    :param chave3: terceira chave gerada a partir do arquivo de áudio.
+    '''
     # Concatena as chaves em uma única string
     chaves_concatenadas = f'{chave1}{chave2}{chave3}'
 
@@ -84,6 +97,12 @@ def gerar_chave_encriptacao(chave1, chave2, chave3):
     return chave_encriptacao
 
 def encrypt(dado, chave_encriptacao):
+    '''
+    Função que encripta um dado utilizando uma chave de encriptação.
+    
+    :param dado: dado a ser encriptado.
+    :param chave_encriptacao: chave de encriptação.
+    '''
     # Cria o objeto de cifra AES
     cipher = AES.new(chave_encriptacao, AES.MODE_ECB)
 
@@ -188,6 +207,12 @@ def listaLeitura(chave_encriptacao=chave_encriptacao):
     print("-" * 40)
 
 def decrypt(dado_encriptado, chave_encriptacao):
+    '''
+    Função que desencripta um dado utilizando uma chave de encriptação.
+    
+    :param dado_encriptado: dado a ser desencriptado.
+    :param chave_encriptacao: chave de encriptação.
+    '''
     # Cria o objeto de cifra AES
     cipher = AES.new(chave_encriptacao, AES.MODE_ECB)
 
