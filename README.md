@@ -33,6 +33,11 @@ A biblioteca 'os' fornece uma maneira de interagir com o sistema operacional sub
 
 Neste programa, foi utilizada para manipular o arquivo de texto onde os dados sobre os computadores estão armazenados.
 
+<h4>🧵 threading</h4>
+A biblioteca 'threading' é uma biblioteca do Python que fornece suporte para programação concorrente por meio de threads. Além disso, oferece recursos para sincronização e comunicação entre threads.
+
+Neste programa, foi utilizada para dividir as funções em threads, para que elas possam ser executadas simultaneamente.
+
 <h2>📷 Galeria</h2>
 
 ![menu](https://user-images.githubusercontent.com/85349959/230675288-2280f127-1d05-4e95-9e31-074c83994f57.png)
