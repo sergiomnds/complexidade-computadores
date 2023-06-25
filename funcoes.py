@@ -7,13 +7,18 @@ Autor: Sérgio Mendes
 import random
 import os
 import threading
+from pydub import AudioSegment
+from Crypto.Cipher import AES
+import hashlib
 
-def gerarDados(qntComputadores = 10):
+def gerarDados(qntComputadores=10, nome_arquivo_audio='floresta.wav'):
     '''
-    Função que gera temperatutas aleatórias para os computadores.
+    Função que gera temperaturas aleatórias para os computadores e armazena os dados encriptados em um arquivo.
     
-    :param qtd_computadores: quantidade de computadores que serão gerados. Por padrão são gerados 10 computadores.
-    :type qtd_computadores: int
+    :param qntComputadores: quantidade de computadores que serão gerados. Por padrão são gerados 10 computadores.
+    :type qntComputadores: int
+    :param nome_arquivo_audio: nome do arquivo de áudio no formato WAV para gerar as chaves de encriptação.
+    :type nome_arquivo_audio: str
     
     :complexidade: O(n), onde n é a quantidade de computadores que serão gerados. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
     Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
@@ -22,27 +27,78 @@ def gerarDados(qntComputadores = 10):
     # Se o arquivo já existir, ele será removido e um novo arquivo será criado.
     if os.path.exists('computadores.txt'):
         os.remove('computadores.txt')
-    
-    # Função auxiliar para gerar os dados de um computador em uma thread
-    def gerarDadosComputador(computador):
-        computador['temperatura'] = round(random.uniform(40.0, 120.0), 1)
+
+    # Carrega o arquivo de áudio e obtém as chaves de encriptação
+    chave1, chave2, chave3 = gerar_chaves_audio(nome_arquivo_audio)
+
+    # Gera a chave de encriptação fixa
+    chave_encriptacao = gerar_chave_encriptacao(chave1, chave2, chave3)
+
+    # Função auxiliar para encriptar os dados de um computador
+    def encriptarDadosComputador(computador):
+        temperatura_encriptada = encrypt(computador['temperatura'], chave_encriptacao)
         with open('computadores.txt', 'a') as arquivo:
-            arquivo.write(f'COMPUTADOR {computador["id"]}: {computador["temperatura"]}\n')
-    
+            arquivo.write(f'COMPUTADOR {computador["id"]}: {temperatura_encriptada}\n')
+
     # Cria uma lista de dicionários com os dados dos computadores
     computadores = []
     threads = []
     for i in range(qntComputadores):
         computador = {'id': i + 1}
+        computador['temperatura'] = round(random.uniform(40.0, 120.0), 1)
         computadores.append(computador)
-        thread = threading.Thread(target=gerarDadosComputador, args=(computador,))
+        thread = threading.Thread(target=encriptarDadosComputador, args=(computador,))
         threads.append(thread)
         thread.start()
 
     # Aguarda todas as threads terminarem
     for thread in threads:
         thread.join()
-        
+
+def gerar_chaves_audio(nome_arquivo):
+    # Carrega o arquivo de áudio
+    audio = AudioSegment.from_wav(nome_arquivo)
+
+    # Obtém os dados brutos do áudio
+    dados_audio = audio.raw_data
+
+    # Gera as chaves a partir dos dados brutos do áudio
+    chave1 = sum(dados_audio) % 256
+    chave2 = sum([dados_audio[i] for i in range(0, len(dados_audio), 2)]) % 256
+    chave3 = sum([dados_audio[i] for i in range(1, len(dados_audio), 2)]) % 256
+
+    # Retorna as chaves geradas
+    return chave1, chave2, chave3
+
+def gerar_chave_encriptacao(chave1, chave2, chave3):
+    # Concatena as chaves em uma única string
+    chaves_concatenadas = f'{chave1}{chave2}{chave3}'
+
+    # Converte as chaves em bytes
+    chaves_bytes = chaves_concatenadas.encode()
+
+    # Gera uma chave de encriptação de tamanho fixo usando hashlib
+    chave_encriptacao = hashlib.sha256(chaves_bytes).digest()
+
+    # Retorna a chave de encriptação
+    return chave_encriptacao
+
+def encrypt(dado, chave_encriptacao):
+    # Cria o objeto de cifra AES
+    cipher = AES.new(chave_encriptacao, AES.MODE_ECB)
+
+    # Converte o dado para uma string e preenche com zeros à direita para ter um tamanho múltiplo de 16
+    dado_str = str(dado).ljust(16, '0')
+
+    # Encripta o dado
+    dado_encriptado = cipher.encrypt(dado_str.encode())
+
+    # Retorna o dado encriptado como uma string hexadecimal
+    return dado_encriptado.hex()
+
+chave1, chave2, chave3 = gerar_chaves_audio('floresta.wav')
+chave_encriptacao = gerar_chave_encriptacao(chave1, chave2, chave3)
+
 def listaComputadores():
     '''
     Função que imprime uma lista de computadores monitorados, sem mostrar suas temperaturas.
@@ -82,9 +138,12 @@ def listaComputadores():
         print(f"{linha[0]:^20}")
     print("-" * 20)
 
-def listaLeitura():
+def listaLeitura(chave_encriptacao=chave_encriptacao):
     '''
-    Função que imprime uma lista das leituras feitas sobre os computadores monitorados, mostrando suas temperaturas.
+    Função que imprime uma lista das leituras feitas sobre os computadores monitorados, mostrando suas temperaturas desencriptadas.
+    
+    :param chave_encriptacao: chave de encriptação utilizada para desencriptar as temperaturas.
+    :type chave_encriptacao: bytes
     
     :complexidade: O(n), onde n é a quantidade de computadores que serão impressos. A medida que a lista cresce, o algoritmo cresce de forma linear quanto a suas operações.
     Se a entrada de dados for muito grande, a execução do algoritmo pode levar muito tempo e exigir muita memória.
@@ -96,13 +155,16 @@ def listaLeitura():
     # Cria um semáforo binário
     semaforo = threading.Semaphore(value=1)
     
-     # Função auxiliar para processar uma linha do arquivo em uma thread
+    # Função auxiliar para processar uma linha do arquivo em uma thread
     def processarLinha(linha):
-        computador, temperatura = linha.strip().split(': ')
+        computador, temperatura_encriptada = linha.strip().split(': ')
+        
+        # Desencripta a temperatura
+        temperatura_desencriptada = decrypt(temperatura_encriptada, chave_encriptacao)
         
         # Adquire o semáforo antes de adicionar à lista
         semaforo.acquire()
-        dados.append((computador, temperatura))
+        dados.append((computador, temperatura_desencriptada))
         semaforo.release()
     
     with open('computadores.txt', 'r') as arquivo:
@@ -125,9 +187,25 @@ def listaLeitura():
         print(f'{dado[0]:<20}{dado[1]:^20}')
     print("-" * 40)
 
-def dadosCrescente():
+def decrypt(dado_encriptado, chave_encriptacao):
+    # Cria o objeto de cifra AES
+    cipher = AES.new(chave_encriptacao, AES.MODE_ECB)
+
+    # Decifra o dado encriptado
+    dado_decifrado = cipher.decrypt(bytes.fromhex(dado_encriptado))
+
+    # Remove o preenchimento de zeros à direita e converte para float
+    dado_desencriptado = float(dado_decifrado.rstrip(b'\x00'))
+
+    # Retorna o dado desencriptado
+    return dado_desencriptado
+
+def dadosCrescente(chave_encriptacao=chave_encriptacao):
     '''
-    Função que retorna os dados em ordem crescente dentro de uma tabela.
+    Função que retorna os dados desencriptados em ordem crescente dentro de uma tabela.
+    
+    :param chave_encriptacao: chave de encriptação utilizada para desencriptar as temperaturas.
+    :type chave_encriptacao: bytes
     
     :complexidade: O(n²), onde n é a quantidade de computadores a serem ordenados. São dois loops que percorrem a lista, a cada iteração do loop externo, que percorre toda a lista, o loop interno percorre novamente toda a lista, comparando o elemento atual com o próximo e realizando a troca se necessário.
     
@@ -139,8 +217,9 @@ def dadosCrescente():
     with open('computadores.txt', 'r') as arquivo:
         computadores = []
         for linha in arquivo:
-            computador, temperatura = linha.strip().split(': ')
-            computadores.append((computador, float(temperatura)))  # adiciona o computador e a temperatura à lista
+            computador, temperatura_encriptada = linha.strip().split(': ')
+            temperatura_desencriptada = decrypt(temperatura_encriptada, chave_encriptacao)
+            computadores.append((computador, temperatura_desencriptada))  # adiciona o computador e a temperatura à lista
 
     # Ordena a lista de computadores, usando bubble sort
     n = len(computadores)
@@ -157,9 +236,12 @@ def dadosCrescente():
     for computador in computadores:
         print(f'{computador[1]:^20}{computador[0]:^20}')
 
-def trioTemperatura(limiteTemperatura = 80.0):
+def trioTemperatura(chave_encriptacao=chave_encriptacao, limiteTemperatura=80.0):
     '''
     Função que encontrar todos os possíveis trios de computadores com temperatura acima do limite especificado (80°C)
+    
+    :param chave_encriptacao: chave de encriptação utilizada para desencriptar as temperaturas.
+    :type chave_encriptacao: bytes
     
     :param limiteTemperatura: temperatura limite para a busca dos trios. Por padrão é 80°C.
     :type limiteTemperatura: float
@@ -181,8 +263,9 @@ def trioTemperatura(limiteTemperatura = 80.0):
     with open('computadores.txt', 'r') as arquivo:
         computadores = []
         for linha in arquivo:
-            computador, temperatura = linha.strip().split(': ')
-            computadores.append((computador, float(temperatura)))
+            computador, temperatura_encriptada = linha.strip().split(': ')
+            temperatura_desencriptada = decrypt(temperatura_encriptada, chave_encriptacao)
+            computadores.append((computador, temperatura_desencriptada))
 
     n = len(computadores)
     trios = []
